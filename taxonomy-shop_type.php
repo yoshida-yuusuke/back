@@ -12,57 +12,71 @@
 			</div>
 			<h2 class="pageTitle">
 				<!--カテゴリの取得-->
-				<?php if (is_category()) :
-					$taxonomy_name  = get_query_var('taxonomy')();
+				<?php
+				//termの取得
+				$term_var = get_query_var('term');
+				//配列を定義する
+				$category = array('なるちゅる', 'たらい', '本格派');
+				//termに対応したインデックス配列を表示
+				if ($term_var == 'naruchuru') {
+					echo $category[0];
+				} elseif ($term_var == 'tarai') {
+					echo $category[1];
+				} else {
+					echo $category[2];
+				}
 				?>
 			</h2>
-			<!--タグの表示-->
-			<ul>
-				<?php
-					$term_list = get_terms('post_tag');
-					$result_list = [];
-					foreach ($term_list as $term) {
-						$u = (get_term_link($term, 'post_tag'));
-						echo "<li><a href='" . $u . "'>" . $term->name . "</a></li>";
-					}
-				?>
-			</ul>
-		<?php else : ?>
-			<h2 class="pageTitle">カテゴリー<br><span>テキスト</span></h2>
-		<?php endif; ?>
-		<div class="row justify-content-center">
+
+			<!--タグ検索機能-->
 			<?php
-			//メニューの投稿タイプ
-			//taxonomyの取得
-			$taxonomy_name  = get_query_var('taxonomy');
-			//termの取得
-			$term_var = get_query_var('term');
-			//欲しいtermが取得できているかの確認
-			echo $term_var;
-			$args = array(
-				'post_type' => 'shop',
-				'orderby' => 'rand',
-				'posts_per_page' => 4,
-				'taxonomy' => $taxonomy_name,
-				'term' => $term_var,
-			);
-
-			$the_query = new WP_Query($args);
-			if ($the_query->have_posts()) :
+			$tags = get_terms(array('hide_empty' => false));
+			foreach ($tags as $tag) :
+				$checked = "";
 			?>
-				<?php while ($the_query->have_posts()) : $the_query->the_post(); ?>
-					<div class="col-md-3">
-						<?php get_template_part('template-parts/loop', 'menu'); ?>
-					</div>
-				<?php endwhile; ?>
-				<?php wp_reset_postdata(); ?>
-			<?php else : '検索結果がありませんでした'; ?>
+				<label>
+					<input type="checkbox" name="shop_tag[]" value="<?php echo esc_attr($tag->term_id); ?>" <?php echo $checked; ?>>
+					<?php echo esc_html($tag->name); ?>
+				</label>
+			<?php endforeach; ?>
 
-			<?php endif; ?>
-		</div>
-		<?php if (function_exists('wp_pagenavi')) {
-			wp_pagenavi();
-		} ?>
+			<button type='submit' name='action' value='send'>検索</button>
+
+
+			<div class="row justify-content-center">
+				<?php
+				//メニューの投稿タイプ
+				//taxonomyの取得
+				$taxonomy_name  = get_query_var('taxonomy');
+
+
+				//欲しいtermが取得できているかの確認
+				echo $term_var;
+				$args = array(
+					'post_type' => 'shop',
+					'orderby' => 'srand',
+					'posts_per_page' => 4,
+					'taxonomy' => $taxonomy_name,
+					'term' => $term_var,
+				);
+
+				$the_query = new WP_Query($args);
+				if ($the_query->have_posts()) :
+				?>
+					<?php while ($the_query->have_posts()) : $the_query->the_post(); ?>
+						<div class="col-md-3">
+							<?php get_template_part('template-parts/loop', 'menu'); ?>
+							<?php echo do_shortcode('[addtoany]'); ?>
+						</div>
+					<?php endwhile; ?>
+					<?php wp_reset_postdata(); ?>
+				<?php else : '検索結果がありませんでした'; ?>
+
+				<?php endif; ?>
+			</div>
+			<?php if (function_exists('wp_pagenavi')) {
+				wp_pagenavi();
+			} ?>
 		</div>
 	</section>
 </main>
