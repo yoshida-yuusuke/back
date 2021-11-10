@@ -54,7 +54,7 @@
 				echo $term_var;
 				$args = array(
 					'post_type' => 'shop',
-					'orderby' => 'srand',
+					'orderby' => 'rand',
 					'posts_per_page' => 4,
 					'taxonomy' => $taxonomy_name,
 					'term' => $term_var,
