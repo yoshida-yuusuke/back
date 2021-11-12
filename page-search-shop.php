@@ -4,6 +4,8 @@
 //送信で送られてきた、検索条件で選択された「種類」と「地域」の値（スラッグ）を取得する
 $shop_type_slug = ($_GET["shop_type"] != "" ? $_GET["shop_type"] : "");
 $shop_area_slug = ($_GET["shop_area"] != "" ? $_GET["shop_area"] : "");
+// 新たに引っ張ってきた変数
+$get_tags = $_GET['shop_tag'];
 // $shop_tag_slug[] = ($_GET["shop_tag"] != "" ? $_GET["shop_tag"] : "");
 
 //スラッグからカテゴリー（タクソノミー）の名前を取得する
@@ -13,10 +15,10 @@ if ($shop_type_slug != "") {
 if ($shop_area_slug != "") {
     $shop_area_name = get_term_by('slug', $shop_area_slug, 'shop_area')->name;
 }
-foreach ($_GET[shop_tag] as $value) {
-    $shop_tag_name = get_term_by('slug', $shop_tag_slug, 'shop_tag')->name;
-    echo "$shop_tag_name";
-}
+// foreach ($_GET["shop_tag"] as $value) {
+//     $shop_tag_name = get_term_by('slug', $value, 'shop_tag')->name;
+//     echo $shop_tag_name;
+// }
 ?>
 
 <div style="font-size:17px;margin-top:3rem">
@@ -61,9 +63,18 @@ foreach ($_GET[shop_tag] as $value) {
                 'taxonomy' => 'shop_area',
                 'field' => 'slug',
                 'terms' => $shop_area_slug //検索条件で選択された「地域」
+            ),
+            array(
+                'taxonomy' => 'shop_tag',
+                'field' => 'slug',
+                'terms' => $shop_tag,
+                'operator' => 'IN', //ANDかIN
             )
         )
     );
+
+
+
 
     //B. 種類だけ選択されている場合
     if ($shop_type_slug != "" && $shop_area_slug === "") {
