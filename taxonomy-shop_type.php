@@ -52,10 +52,11 @@
 
 				//欲しいtermが取得できているかの確認
 				echo $term_var;
+				//ランダム表示
 				$args = array(
 					'post_type' => 'shop',
 					'orderby' => 'rand',
-					'posts_per_page' => 4,
+					'posts_per_page' => 3,
 					'taxonomy' => $taxonomy_name,
 					'term' => $term_var,
 				);
@@ -66,7 +67,7 @@
 					<?php while ($the_query->have_posts()) : $the_query->the_post(); ?>
 						<div class="col-md-3">
 							<?php get_template_part('template-parts/loop', 'menu'); ?>
-							<?php echo do_shortcode('[addtoany]'); ?>
+
 						</div>
 					<?php endwhile; ?>
 					<?php wp_reset_postdata(); ?>
