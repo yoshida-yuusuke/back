@@ -56,7 +56,7 @@
 				$args = array(
 					'post_type' => 'shop',
 					'orderby' => 'rand',
-					'posts_per_page' => 3,
+					'posts_per_page' => 4,
 					'taxonomy' => $taxonomy_name,
 					'term' => $term_var,
 				);
