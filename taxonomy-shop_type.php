@@ -50,11 +50,10 @@
 				$taxonomy_name  = get_query_var('taxonomy');
 
 
-				//欲しいtermが取得できているかの確認
-				echo $term_var;
 				//ランダム表示
 				$args = array(
 					'post_type' => 'shop',
+					'paged' => $paged,
 					'orderby' => 'rand',
 					'posts_per_page' => 4,
 					'taxonomy' => $taxonomy_name,
@@ -76,7 +75,7 @@
 				<?php endif; ?>
 			</div>
 			<?php if (function_exists('wp_pagenavi')) {
-				wp_pagenavi();
+				wp_pagenavi(array('query' => $the_query));
 			} ?>
 		</div>
 	</section>
