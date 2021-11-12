@@ -2,6 +2,7 @@
 <?php get_header(); ?>
 
 <h2 class="pageTitle">特集<span>SPECIAL</span></h2>
+<h2 class="pageTitle">テスト</h2>
 <?php get_template_part('template-parts/breadcrumb'); ?>
 
 <main class="main">
