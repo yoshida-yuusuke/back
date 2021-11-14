@@ -2,7 +2,17 @@
 <?php get_header(); ?>
 
 <h2 class="pageTitle">特集<span>SPECIAL</span></h2>
-<h2 class="pageTitle">テスト</h2>
+<?php
+$tags = get_terms(array('hide_empty' => false));
+foreach ($tags as $tag) :
+    $checked = "";
+?>
+    <label>
+        <input type="checkbox" name="shop_tag[]" value="<?php echo esc_attr($tag->term_id); ?>" <?php echo $checked; ?>>
+        <?php echo esc_html($tag->name); ?>
+    </label>
+<?php endforeach; ?>
+<button type='submit' name='action' value='send'>検索</button>
 <?php get_template_part('template-parts/breadcrumb'); ?>
 
 <main class="main">
@@ -32,11 +42,6 @@
                     wp_pagenavi();
                 } ?>
             </div>
-
-            <!-- <div class="col-12 col-md-3">
-                <?php get_sidebar('categories'); ?>
-                <?php get_sidebar('archives'); ?>
-            </div> -->
         </div>
     </div>
 </main>
