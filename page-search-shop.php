@@ -1,5 +1,9 @@
 <?php get_header(); ?>
 
+<!-- 送信後の検索結果を作る -->
+<!-- $argsがvardumpで動くかどうかチェック -->
+<!-- $argsの中身が数十件でるんだったqueryをループで実行する必要があるのではないか？という指摘 -->
+<!-- 各A,B,C,Dで$argsが書き換えられた後に他の所に入ったら書き換えられるのでは？という指摘 -->
 <?php
 //送信で送られてきた、検索条件で選択された「種類」と「地域」の値（スラッグ）を取得する
 $shop_type_slug = ($_GET["shop_type"] != "" ? $_GET["shop_type"] : "");
@@ -15,10 +19,21 @@ if ($shop_type_slug != "") {
 if ($shop_area_slug != "") {
     $shop_area_name = get_term_by('slug', $shop_area_slug, 'shop_area')->name;
 }
-// foreach ($_GET["shop_tag"] as $value) {
-//     $shop_tag_name = get_term_by('slug', $value, 'shop_tag')->name;
-//     echo $shop_tag_name;
-// }
+// 1:タグ条件？？？？
+//is_set の方がよいとの指摘、配列かどうかしか見てないんじゃないかとの指摘
+if (is_array($get_tags)) {
+    echo '<p>タグ:';
+    foreach ($get_tags as $value) {
+        $s_term = get_term_by('slug', $value, 'post_tag');
+        echo $s_term->name;
+        // 今の値が最後の値じゃない場合はエコーだせという命令
+        if ($value !== end($get_tags)) {
+            echo ', ';
+        }
+    }
+    echo '</p>';
+}
+
 ?>
 
 <div style="font-size:17px;margin-top:3rem">
@@ -31,10 +46,12 @@ if ($shop_area_slug != "") {
     <?php
     if ($shop_type_slug != "") {
         //前の画面で選択されていたうどんの種類を表示
+        //送られてきた店舗名はいつもひとつだけなのか？
         echo "<b>種類：</b>" . $shop_type_name . "&nbsp;";
     }
     if ($shop_area_slug != "") {
         //前の画面で選択されていた地域を表示
+        //送られてきたエリア名はいつもひとつだけなのか？
         echo "<b>地域：</b>" . $shop_area_name . "&nbsp;";
     }
     ?>
@@ -77,6 +94,7 @@ if ($shop_area_slug != "") {
 
 
     //B. 種類だけ選択されている場合
+    // ここのif文の意味？
     if ($shop_type_slug != "" && $shop_area_slug === "") {
         $args = array(
             'post_type' => 'shop', //カスタム投稿「shop」
@@ -136,10 +154,13 @@ if ($shop_area_slug != "") {
     <?php
     //検索実行
     $the_query = new WP_Query($args);
+    // 一つ目のVAR_DUMP($ARGS)をここに？
     if ($the_query->have_posts()) {
+        // 条件がTRUEである限り、ループするのならば、have_postsとthe＿postはどう違う？
         while ($the_query->have_posts()) {
             $the_query->the_post();
             //とりあえずタイトル（店名）だけ出力
+            // ２つ目のVAR_DUMP($ARGS)をここに？
             the_title();
             echo "<br>";
         }
