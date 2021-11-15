@@ -2,6 +2,16 @@
 <?php get_header(); ?>
 
 <h2 class="pageTitle">最新情報<span>NEWS</span></h2>
+                                <?php
+$posttags = get_the_tags();
+$tags = get_tags();
+if ( $posttags ) {
+foreach( $posttags as $tag) {
+echo '<a href="'. get_tag_link($tag->term_id) .'">' . $tag->name . '</a>';
+echo "\t";
+}
+}
+?>
 <?php get_template_part('template-parts/breadcrumb'); ?>
 
 <main class="main">
@@ -33,18 +43,16 @@
                                 <?php comments_template(); ?>
                             </div>
 
-                            <?php
-                            $tags = get_terms(array(
-                                'hide_empty' => false
-                            ));
-                            print_r($tags);
-                            foreach ($tags as $tag) :
-                            ?>
-                                <label>
-                                    <a href="<?php echo esc_attr($tag->term_id); ?>"><?php echo esc_html($tag->name); ?></a>
-                                </label>
-                            <?php endforeach; ?>
-                            <br>
+<?php
+$posttags = get_the_tags();
+$tags = get_tags();
+if ( $posttags ) {
+foreach( $posttags as $tag) {
+echo '<a href="'. get_tag_link($tag->term_id) .'">' . $tag->name . '</a>';
+echo "\t";
+}
+}
+?>
                             <button>
                                 <a href="<?php the_field('page_id'); ?>">店舗詳細ページへ</a>
                             </button>
@@ -93,7 +101,6 @@
             <?php endwhile; ?>
             <?php wp_reset_postdata(); ?>
         <?php else : '検索結果がありませんでした'; ?>
-
         <?php endif; ?>
     </div>
 </main>
