@@ -42,6 +42,17 @@
 
 			<button type='submit' name='action' value='send'>検索</button>
 
+			<!--5番目を大きく表示する-->
+			<?php $count = 0;
+			?>
+			<?php while (have_posts()) : $count++;
+				the_post(); ?>
+				<div class="col-md-4">
+					<?php if ($count == 5) {
+						get_template_part('template-parts/loop', 'menu5');
+					} ?>
+				</div>
+			<?php endwhile; ?>
 
 			<div class="row justify-content-center">
 				<?php
@@ -55,7 +66,7 @@
 					'post_type' => 'shop',
 					'paged' => $paged,
 					'orderby' => 'rand',
-					'posts_per_page' => 4,
+					'posts_per_page' => 8,
 					'taxonomy' => $taxonomy_name,
 					'term' => $term_var,
 				);
