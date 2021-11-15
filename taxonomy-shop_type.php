@@ -50,10 +50,10 @@
 				$taxonomy_name  = get_query_var('taxonomy');
 
 
-				//欲しいtermが取得できているかの確認
-				echo $term_var;
+				//ランダム表示
 				$args = array(
 					'post_type' => 'shop',
+					'paged' => $paged,
 					'orderby' => 'rand',
 					'posts_per_page' => 4,
 					'taxonomy' => $taxonomy_name,
@@ -66,7 +66,7 @@
 					<?php while ($the_query->have_posts()) : $the_query->the_post(); ?>
 						<div class="col-md-3">
 							<?php get_template_part('template-parts/loop', 'menu'); ?>
-							<?php echo do_shortcode('[addtoany]'); ?>
+
 						</div>
 					<?php endwhile; ?>
 					<?php wp_reset_postdata(); ?>
@@ -75,7 +75,7 @@
 				<?php endif; ?>
 			</div>
 			<?php if (function_exists('wp_pagenavi')) {
-				wp_pagenavi();
+				wp_pagenavi(array('query' => $the_query));
 			} ?>
 		</div>
 	</section>
