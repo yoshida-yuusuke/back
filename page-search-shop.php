@@ -24,8 +24,8 @@ if ($shop_area_slug != "") {
 if (is_array($get_tags)) {
     echo '<p>タグ:';
     foreach ($get_tags as $value) {
-        $s_term = get_term_by('slug', $value, 'post_tag');
-        echo $s_term->name;
+        // $s_term = get_term_by('slug', $value, 'post_tag');
+        // echo $s_term->name;
         // 今の値が最後の値じゃない場合はエコーだせという命令
         if ($value !== end($get_tags)) {
             echo ', ';
@@ -33,7 +33,8 @@ if (is_array($get_tags)) {
     }
     echo '</p>';
 }
-
+// 検索のフラグ？
+$do_search = true;
 ?>
 
 <div style="font-size:17px;margin-top:3rem">
@@ -62,93 +63,180 @@ if (is_array($get_tags)) {
     //ここから検索のパラメーターを準備する
 
     //A. 種類と地域の両方が選択されている場合
-    $args = array(
-        'post_type' => 'shop', //カスタム投稿「shop」
-        'post_status' => 'publish', //公開された投稿のみ
-        'orderby' =>  'date', //日付の順に並べる
-        'order' =>  'DESC', //降順に並べる
+    // if文の追加、各セクターごとに条件分岐を作る。下に追加しているがそれの読み解き
+    if ($get_tags) {
+        $args = array(
+            'post_type' => 'shop', //カスタム投稿「shop」
+            'post_status' => 'publish', //公開された投稿のみ
+            'orderby' =>  'date', //日付の順に並べる
+            'order' =>  'DESC', //降順に並べる
 
-        //タクソノミー「shop_type」と「shop_area」のAND検索
-        'tax_query' => array(
-            'relation' => 'AND',
-            array(
-                'taxonomy' => 'shop_type',
-                'field' => 'slug',
-                'terms' => $shop_type_slug //検索条件で選択された「種類」
-            ),
-            array(
-                'taxonomy' => 'shop_area',
-                'field' => 'slug',
-                'terms' => $shop_area_slug //検索条件で選択された「地域」
-            ),
-            array(
-                'taxonomy' => 'shop_tag',
-                'field' => 'slug',
-                'terms' => $shop_tag,
-                'operator' => 'IN', //ANDかIN
+            //タクソノミー「shop_type」と「shop_area」のAND検索
+            'tax_query' => array(
+                'relation' => 'AND',
+                array(
+                    'taxonomy' => 'shop_type',
+                    'field' => 'slug',
+                    'terms' => $shop_type_slug //検索条件で選択された「種類」
+                ),
+                array(
+                    'taxonomy' => 'shop_area',
+                    'field' => 'slug',
+                    'terms' => $shop_area_slug //検索条件で選択された「地域」
+                ),
+                array(
+                    'taxonomy' => 'shop_tag',
+                    'field' => 'slug',
+                    'terms' => $get_tags,
+                    'operator' => 'IN'
+                ),
             )
-        )
-    );
+        );
+    } else {
+        $args = array(
+            'post_type' => 'shop', //カスタム投稿「shop」
+            'post_status' => 'publish', //公開された投稿のみ
+            'orderby' =>  'date', //日付の順に並べる
+            'order' =>  'DESC', //降順に並べる
 
+            //タクソノミー「shop_type」と「shop_area」のAND検索
+            'tax_query' => array(
+                'relation' => 'AND',
+                array(
+                    'taxonomy' => 'shop_type',
+                    'field' => 'slug',
+                    'terms' => $shop_type_slug //検索条件で選択された「種類」
+                ),
+                array(
+                    'taxonomy' => 'shop_area',
+                    'field' => 'slug',
+                    'terms' => $shop_area_slug //検索条件で選択された「地域」
+                ),
+            )
+        );
+    }
 
 
 
     //B. 種類だけ選択されている場合
     // ここのif文の意味？
     if ($shop_type_slug != "" && $shop_area_slug === "") {
-        $args = array(
-            'post_type' => 'shop', //カスタム投稿「shop」
-            'post_status' => 'publish', //公開された投稿のみ
-            'orderby' =>  'date', //日付の順に並べる
-            'order' =>  'DESC', //降順に並べる
+            // if文の追加、各セクターごとに条件分岐を作る。下に追加しているがそれの読み解き
+        if ($get_tags) {
+            $args = array(
+                'post_type' => 'shop', //カスタム投稿「shop」
+                'post_status' => 'publish', //公開された投稿のみ
+                'orderby' =>  'date', //日付の順に並べる
+                'order' =>  'DESC', //降順に並べる
 
-            //タクソノミー「shop_type」の検索
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'shop_type',
-                    'field' => 'slug',
-                    'terms' => $shop_type_slug //検索条件で選択された「種類」
+                //タクソノミー「shop_type」の検索
+                'tax_query' => array(
+                    // ?
+                    'relation' => 'AND',
+                    array(
+                        'taxonomy' => 'shop_type',
+                        'field' => 'slug',
+                        'terms' => $shop_type_slug //検索条件で選択された「種類」
+                    ),
+                    // タグの指定
+                    array(
+                        'taxonomy' => 'shop_tag',
+                        'field' => 'slug',
+                        'terms' => $get_tags,
+                        'operator' => 'IN'
+                    )
                 )
-            )
-        );
-    }
+            );
+        } else {
+            $args = array(
+                'post_type' => 'shop', //カスタム投稿「shop」
+                'post_status' => 'publish', //公開された投稿のみ
+                'orderby' =>  'date', //日付の順に並べる
+                'order' =>  'DESC', //降順に並べる
 
+                //タクソノミー「shop_type」の検索
+                'tax_query' => array(
+                    // ?
+                    'relation' => 'AND',
+                    array(
+                        'taxonomy' => 'shop_type',
+                        'field' => 'slug',
+                        'terms' => $shop_type_slug //検索条件で選択された「種類」
+                    )
+                )
+            );
+        }
+    }
     //C. 地域だけ選択されている
     if ($shop_type_slug === "" && $shop_area_slug != "") {
-        $args = array(
-            'post_type' => 'shop', //カスタム投稿「shop」
-            'post_status' => 'publish', //公開された投稿のみ
-            'orderby' =>  'date', //日付の順に並べる
-            'order' =>  'DESC', //降順に並べる
+            // if文の追加、各セクターごとに条件分岐を作る。下に追加しているがそれの読み解き
+        if ($get_tags) {
+            $args = array(
+                'post_type' => 'shop', //カスタム投稿「shop」
+                'post_status' => 'publish', //公開された投稿のみ
+                'orderby' =>  'date', //日付の順に並べる
+                'order' =>  'DESC', //降順に並べる
 
-            //タクソノミー「shop_area」の検索
-            'tax_query' => array(
+                //タクソノミー「shop_area」の検索
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'shop_area',
+                        'field' => 'slug',
+                        'terms' => $shop_area_slug //検索条件で選択された「地域」
+                    )
+                ),
                 array(
-                    'taxonomy' => 'shop_area',
+                    'taxonomy' => 'shop_tag',
                     'field' => 'slug',
-                    'terms' => $shop_area_slug //検索条件で選択された「地域」
+                    'terms' => $get_tags,
+                    'operator' => 'IN'
                 )
-            )
-        );
+            );
+        } else {
+            $args = array(
+                'post_type' => 'shop', //カスタム投稿「shop」
+                'post_status' => 'publish', //公開された投稿のみ
+                'orderby' =>  'date', //日付の順に並べる
+                'order' =>  'DESC', //降順に並べる
+
+                //タクソノミー「shop_area」の検索
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'shop_area',
+                        'field' => 'slug',
+                        'terms' => $shop_area_slug //検索条件で選択された「地域」
+                    )
+
+                )
+            );
+        }
     }
     //D. 両方選択されていない
     if ($shop_type_slug === "" && $shop_area_slug === "") {
-        $args = array(
-            'post_type' => 'shop', //カスタム投稿「shop」
-            'post_status' => 'publish', //公開された投稿のみ
-            'orderby' =>  'date', //日付の順に並べる
-            'order' =>  'DESC', //降順に並べる
+        // if文の追加、各セクターごとに条件分岐を作る。下に追加しているがそれの読み解き
+        if ($get_tags) {
+            $args = array(
+                'post_type' => 'shop', //カスタム投稿「shop」
+                'post_status' => 'publish', //公開された投稿のみ
+                'orderby' =>  'date', //日付の順に並べる
+                'order' =>  'DESC', //降順に並べる
 
-            //タクソノミー「shop_area」の検索
-            // 'tax_query' => array(
-            //     array(
-            //         'taxonomy' => 'shop_area',
-            //         'field' => 'slug',
-            //         'terms' => $shop_area_slug //検索条件で選択された「地域」
-            //     )
-            // )
-        );
+                //タグ「shop_tag」の検索
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'shop_tag',
+                        'field' => 'slug',
+                        'terms' => $get_tags,
+                        'operator' => 'IN'
+                    )
+                )
+            );
+        } else {
+            $do_search = false;
+        }
     }
+    ?>
+
     ?>
 
     <?php
@@ -164,8 +252,14 @@ if (is_array($get_tags)) {
             the_title();
             echo "<br>";
         }
+    }else{
+        echo"検索結果がありません１";
     }
     wp_reset_postdata();
+else{
+    echo"検索結果がありません2";
+}
+
     ?>
 
 
