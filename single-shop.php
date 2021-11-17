@@ -9,30 +9,13 @@
 <main class="main">
 	<section class="sec">
 		<div class="container">
-			<!--タグ検索機能-->
-			<?php
-			$tags = get_terms(array('hide_empty' => false));
-			foreach ($tags as $tag) :
-				$checked = "";
-			?>
-				<label>
-					<input type="checkbox" name="shop_tag[]" value="<?php echo esc_attr($tag->term_id); ?>" <?php echo $checked; ?>>
-					<?php echo esc_html($tag->name); ?>
-				</label>
-			<?php endforeach; ?>
 
-			<button type='submit' name='action' value='send'>検索</button>
-
-			<!--ボスからのタグ絞り込み機能-->
+			<!--タグ表示機能-->
 			<?php
-			$posttags = get_the_tags();
-			$tags = get_tags();
-			if ($posttags) {
-				foreach ($posttags as $tag) {
-					echo '<a href="' . get_tag_link($tag->term_id) . '">' . $tag->name . '</a>';
-					echo "\t";
-				}
-			}
+			$terms = get_the_terms(get_the_ID(), 'shop_type');
+			foreach ($terms as $term) :
+				echo $term->name;
+			endforeach;
 			?>
 
 			<div class="article article-menu">
@@ -134,47 +117,58 @@
 								<span><?php the_field('space') ?></span><br />
 								<a href="<?php the_field('HP_SNS') ?>"><?php the_field('HP_SNS') ?></a><br />
 
+								<!--地図-->
+								<?php the_field('map') ?></br>
+
 								<!--食べレポ-->
 								<?php the_field('taberepo'); ?>
 
 								<!--カテゴリー一覧に戻るボタン-->
-								<a href="<?php  ?>" <?php endwhile; ?> <?php endif; ?> <?php
-																						//メニューの投稿タイプ
-																						//taxonomyの取得
-																						$taxonomy_name  = get_query_var('taxonomy');
-																						//termの取得
-																						$term_var = get_query_var('term');
+								<?php $udontype = ""; ?>
+								<?php foreach ($terms as $term) {
+									$udontype = $term->slug;
+								} ?>
+								<a href="<?php echo esc_url(home_url('/archives/shop_type/' . $udontype)); ?>">店舗一覧にもどる</a>
+							<?php endwhile; ?>
+						<?php endif; ?>
+						<?php
+						//メニューの投稿タイプ
+						//taxonomyの取得
+						$taxonomy_name  = get_query_var('taxonomy');
+						//termの取得
+						$term_var = get_query_var('term');
 
-																						//ランダム表示・付近のおすすめ未実装
-																						$args = array(
-																							'post_type' => 'shop',
-																							'orderby' => 'rand',
-																							'posts_per_page' => 4,
-																							'taxonomy' => $taxonomy_name,
-																							'term' => $term_var,
-																						);
 
-																						$the_query = new WP_Query($args);
-																						if ($the_query->have_posts()) :
-																						?> <?php while ($the_query->have_posts()) : $the_query->the_post(); ?> <div class="col-md-3">
+						//同じ地域ランダム表示・未完成
+						$args = array(
+							'post_type' => 'shop',
+							'orderby' => 'rand',
+							'posts_per_page' => 4,
+							'taxonomy' => $taxonomy_name,
+
+						);
+
+						$the_query = new WP_Query($args);
+						if ($the_query->have_posts()) :
+						?> <?php while ($the_query->have_posts()) : $the_query->the_post(); ?> <div class="col-md-3">
 									<?php get_template_part('template-parts/loop', 'menu'); ?>
 
+								</div>
+							<?php endwhile; ?>
+							<?php wp_reset_postdata(); ?>
+						<?php else : '検索結果がありませんでした'; ?>
+
+						<?php endif; ?>
 					</div>
-				<?php endwhile; ?>
-				<?php wp_reset_postdata(); ?>
-			<?php else : '検索結果がありませんでした'; ?>
 
-			<?php endif; ?>
-				</div>
+					<div class="col-12 col-md-6">
+						<div class="article_pic">
 
-				<div class="col-12 col-md-6">
-					<div class="article_pic">
-
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		</article>
+			</article>
 		</div>
 	</section>
 </main>

@@ -29,18 +29,7 @@
 			</h2>
 
 			<!--タグ検索機能-->
-			<?php
-			$tags = get_terms(array('hide_empty' => false));
-			foreach ($tags as $tag) :
-				$checked = "";
-			?>
-				<label>
-					<input type="checkbox" name="shop_tag[]" value="<?php echo esc_attr($tag->term_id); ?>" <?php echo $checked; ?>>
-					<?php echo esc_html($tag->name); ?>
-				</label>
-			<?php endforeach; ?>
 
-			<button type='submit' name='action' value='send'>検索</button>
 
 			<!--5番目を大きく表示する-->
 			<?php $count = 0;
