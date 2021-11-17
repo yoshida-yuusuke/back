@@ -29,6 +29,12 @@
 			</h2>
 
 			<!--タグ検索機能-->
+			<?php
+			$terms = get_the_terms(get_the_ID(), 'shop_tag');
+			foreach ($terms as $term) :
+				echo $term->name . ' ';
+			endforeach;
+			?>
 
 
 			<!--5番目を大きく表示する-->

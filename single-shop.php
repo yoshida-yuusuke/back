@@ -12,9 +12,9 @@
 
 			<!--タグ表示機能-->
 			<?php
-			$terms = get_the_terms(get_the_ID(), 'shop_type');
+			$terms = get_the_terms(get_the_ID(), 'shop_tag');
 			foreach ($terms as $term) :
-				echo $term->name;
+				echo $term->name . ' ';
 			endforeach;
 			?>
 
@@ -99,6 +99,45 @@
 								</div>
 
 								<!--メーター-->
+								<!--雰囲気-->
+								<?php if (get_field('mood') == 'mood1') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/雰囲気メーター/hunniki_meter_1.jpg" alt="">
+								<?php elseif (get_field('mood') == 'mood2') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/雰囲気メーター/hunniki_meter_2.jpg" alt="">
+								<?php elseif (get_field('mood') == 'mood3') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/雰囲気メーター/hunniki_meter_3.jpg" alt="">
+								<?php elseif (get_field('mood') == 'mood4') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/雰囲気メーター/hunniki_meter_4.jpg" alt="">
+								<?php else : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/雰囲気メーター/hunniki_meter_5.jpg" alt="">
+								<?php endif; ?>
+
+
+								<!--麺-->
+								<?php if (get_field('men') == 'men1') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/麺メーター/menn_meter_1.jpg" alt="">
+								<?php elseif (get_field('men') == 'men2') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/麺メーター/menn_meter_2.jpg" alt="">
+								<?php elseif (get_field('men') == 'men3') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/麺メーター/menn_meter_3.jpg" alt="">
+								<?php elseif (get_field('men') == 'men4') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/麺メーター/menn_meter_4.jpg" alt="">
+								<?php else : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/麺メーター/menn_meter_5.jpg" alt="">
+								<?php endif; ?>
+
+								<!--つゆ・出汁-->
+								<?php if (get_field('tuyu') == 'tuyu1') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/つゆメーター/tuyu_meter_1.jpg" alt="">
+								<?php elseif (get_field('tuyu') == 'tuyu2') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/つゆメーター/tuyu_meter_2.jpg" alt="">
+								<?php elseif (get_field('tuyu') == 'tuyu3') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/つゆメーター/tuyu_meter_3.jpg" alt="">
+								<?php elseif (get_field('tuyu') == 'tuyu4') : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/つゆメーター/tuyu_meter_4.jpg" alt="">
+								<?php else : ?>
+									<img src="<?php echo get_template_directory_uri(); ?>/assets/img/つゆメーター/tuyu_meter_5.jpg" alt="">
+								<?php endif; ?>
 
 								<!--基本情報-->
 								<span><?php the_field('name') ?></span><br />
@@ -135,17 +174,28 @@
 						//メニューの投稿タイプ
 						//taxonomyの取得
 						$taxonomy_name  = get_query_var('taxonomy');
-						//termの取得
-						$term_var = get_query_var('term');
+
+						//カテゴリ(地域)の取得
+						$areas = get_the_terms(get_the_ID(), 'shop_area');
+						$taxonomy_name = '';
+						foreach ($areas as $area) :
+							echo $area->slug;
+							$taxonomy_name = $area->slug;
+						endforeach;
 
 
-						//同じ地域ランダム表示・未完成
+						//同じ地域ランダム表示
 						$args = array(
 							'post_type' => 'shop',
 							'orderby' => 'rand',
 							'posts_per_page' => 4,
-							'taxonomy' => $taxonomy_name,
-
+							'tax_query' => array(
+								array(
+									'taxonomy' => 'shop_area',
+									'field' => 'slug',
+									'terms' => $taxonomy_name
+								)
+							)
 						);
 
 						$the_query = new WP_Query($args);
