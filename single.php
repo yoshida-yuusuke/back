@@ -57,6 +57,7 @@ echo "\t";
                                 <a href="<?php the_field('page_id'); ?>">店舗詳細ページへ</a>
                             </button>
                             <?php echo do_shortcode('[addtoany]'); ?>
+                            <?php wpfp_link(); ?>
                             <div class="postLinks">
                                 <div class="postLink postLink-prev"><?php previous_post_link('<iclass="fas fa-chevron-left"></i>%link'); ?>
                                 </div>
@@ -93,9 +94,9 @@ echo "\t";
                 <?php $count++; ?>
                 <div class="col-md-3">
                     <?php if ($count = 5) {
-                        get_template_part('template-parts/loop', 'menu5');
+                        get_template_part('template-parts/loop', 'speical5');
                     } else {
-                        get_template_part('template-parts/loop', 'menu');
+                        get_template_part('template-parts/loop', 'speical');
                     }; ?>
                 </div>
             <?php endwhile; ?>

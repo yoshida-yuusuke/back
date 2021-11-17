@@ -3,16 +3,7 @@
 
 <h2 class="pageTitle"><?php single_tag_title(); ?></h2>
 <?php get_template_part('template-parts/breadcrumb'); ?>
-                                <?php
-$posttags = get_the_tags();
-$tags = get_tags();
-if ( $posttags ) {
-foreach( $posttags as $tag) {
-echo '<a href="'. get_tag_link($tag->term_id) .'">' . $tag->name . '</a>';
-echo "\t";
-}
-}
-?>
+
 <main class="main">
     <div class="container">
         <div class="row">
@@ -35,6 +26,5 @@ echo "\t";
         </div>
     </div>
 </main>
-
 <!-- header.phpをインクルードする -->
 <?php get_footer(); ?>
